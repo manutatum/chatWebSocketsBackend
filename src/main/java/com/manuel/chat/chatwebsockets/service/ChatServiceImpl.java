@@ -51,12 +51,9 @@ public class ChatServiceImpl implements ChatService{
     }
 
     @Override
-    public List<ChatMessageResponseDto> getMessagesForChat(Long chatId) {
-
-        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new NoSuchElementException("Chat not found"));
+    public List<ChatMessageResponseDto> getMessagesForChat(UserResponseDto user, Long chatId) {
+        Chat chat = chatRepository.findByIdAndParticipants_Id(chatId, user.getId()).orElseThrow(() -> new NoSuchElementException("No se encontro el chat"));
 
         return chat.getMessages().stream().map(ChatMessageResponseDto::new).toList();
     }
-
-
 }

@@ -1,15 +1,10 @@
 package com.manuel.chat.chatwebsockets.dto.user;
 
 
-import com.manuel.chat.chatwebsockets.model.Role;
 import com.manuel.chat.chatwebsockets.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
