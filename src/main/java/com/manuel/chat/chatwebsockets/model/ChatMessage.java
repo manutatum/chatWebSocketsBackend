@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -36,5 +36,5 @@ public class ChatMessage {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 }
