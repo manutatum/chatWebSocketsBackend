@@ -8,6 +8,11 @@ import com.manuel.chat.chatwebsockets.dto.user.UserResponseDto;
 import com.manuel.chat.chatwebsockets.model.User;
 import com.manuel.chat.chatwebsockets.service.ChatService;
 import com.manuel.chat.chatwebsockets.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/chat")
+@Tag(name = "Chat", description = "Chat operations")
 public class ChatController {
 
     @Autowired
@@ -28,6 +34,17 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
+    @Operation(
+            summary = "Get Chats",
+            description = "Retrieve the chats of the authenticated user",
+            security = {@SecurityRequirement(name = "bearerAuth")}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Chats retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized: Missing or invalid JWT token"),
+            @ApiResponse(responseCode = "403", description = "Forbidden: Insufficient permissions"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<?> getChats() {
@@ -41,6 +58,18 @@ public class ChatController {
         return ResponseEntity.ok().body(chats);
     }
 
+    @Operation(
+            summary = "Create Chat",
+            description = "Create a new chat including participants",
+            security = {@SecurityRequirement(name = "bearerAuth")}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Chat created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or participants list"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized: Missing or invalid JWT token"),
+            @ApiResponse(responseCode = "403", description = "Forbidden: Insufficient permissions"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> createChat(@RequestBody @Valid ChatRequestDto chatRequestDto ) {
@@ -56,6 +85,18 @@ public class ChatController {
         return ResponseEntity.ok(Collections.singletonMap("chat", response));
     }
 
+    @Operation(
+            summary = "Get Chat Messages",
+            description = "Retrieve all messages for a specific chat by chatId",
+            security = {@SecurityRequirement(name = "bearerAuth")}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Messages retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized: Missing or invalid JWT token"),
+            @ApiResponse(responseCode = "403", description = "Forbidden: Insufficient permissions"),
+            @ApiResponse(responseCode = "404", description = "Chat not found or user not participant"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{chatId}/messages")
     public ResponseEntity<?> getChatMessages(@PathVariable Long chatId) {

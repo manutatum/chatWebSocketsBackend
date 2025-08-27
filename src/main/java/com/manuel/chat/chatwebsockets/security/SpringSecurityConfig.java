@@ -48,6 +48,7 @@ public class SpringSecurityConfig {
         return http
                 //! RUTAS
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
                         .requestMatchers("/ws/**").permitAll()
