@@ -3,12 +3,15 @@ package com.manuel.chat.chatwebsockets.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.manuel.chat.chatwebsockets.dto.chat.message.ChatMessageRequestDto;
+import com.manuel.chat.chatwebsockets.dto.chat.message.ChatMessageResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +34,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         //! Mapeo el mensaje recibido a nuestro DTO
         ChatMessageRequestDto msgDto = mapper.readValue(message.getPayload(), ChatMessageRequestDto.class);
+        msgDto.setTimestamp(OffsetDateTime.now(ZoneId.of("Europe/Madrid")));
 
         String type = msgDto.getType();
         Long chatId = msgDto.getChatId();
@@ -59,13 +63,14 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
             if (room != null) {
 
-                //! CONVERTIMOS EL DTO EN UN MENSAJE QUE SE VA A ENVIAR A LOS USUARIOS
-                TextMessage outMsg = new TextMessage(mapper.writeValueAsString(msgDto));
-
                 synchronized (room) {
+                    System.out.println(msgDto.getTimestamp());
 
                     //! GUARDAR MENSAJE EN LA BD
                     chatService.saveMessage(msgDto);
+
+                    //! CONVERTIMOS EL DTO EN UN MENSAJE QUE SE VA A ENVIAR A LOS USUARIOS
+                    TextMessage outMsg = new TextMessage(mapper.writeValueAsString(msgDto));
 
                     //! ENVIAMOS A CADA SESIÓN QUE ESTÉ ABIERTA EL MENSAJE
                     for (WebSocketSession s : room) {

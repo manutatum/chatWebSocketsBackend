@@ -19,7 +19,7 @@ public class ChatMessageRequestDto {
     private String username;
     private String message;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssXXX")
     private OffsetDateTime timestamp;
 
 }

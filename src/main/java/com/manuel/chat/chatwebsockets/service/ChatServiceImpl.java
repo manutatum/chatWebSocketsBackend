@@ -14,6 +14,8 @@ import com.manuel.chat.chatwebsockets.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -72,12 +74,12 @@ public class ChatServiceImpl implements ChatService{
         chatMessage.setContent(chatMessageRequestDto.getMessage());
         chatMessage.setTimestamp(chatMessageRequestDto.getTimestamp());
 
+        System.out.println(chatMessage.getTimestamp());
+
         User senderUser = userRepository.findByUsername(chatMessageRequestDto.getUsername()).orElseThrow(() -> new NoSuchElementException("Usuario no encontrado: " + chatMessageRequestDto.getUsername()));
 
         chatMessage.setSender(senderUser);
 
-        ChatMessage savedChat = chatMessageRepository.save(chatMessage);
-
-        new ChatMessageResponseDto(savedChat);
+        chatMessageRepository.save(chatMessage);
     }
 }

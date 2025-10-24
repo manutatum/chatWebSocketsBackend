@@ -35,5 +35,6 @@ public class Chat {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    @OrderBy("timestamp ASC")
     private List<ChatMessage> messages;
 }
